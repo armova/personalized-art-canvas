@@ -3,10 +3,10 @@ import { Button, ButtonGroup } from 'react-bootstrap/lib/'
 
 const Controls = (props) => (
   <ButtonGroup justified>
-    <Button href="#" onClick={() => props.rasterToBalls()}>Image Digitalizer</Button>
-    <Button href="#" onClick={() => props.initializePath()}>Try A S D W Magic Keys</Button>
-    <Button href="#" onClick={() => props.initializeAnimation()}>Tree to birds!</Button>
-    <Button href="#" onClick={() => props.who()}>Who's Watching?</Button>
+    <Button href="#" disabled={false} onClick={() => props.rasterToBalls()}>First Hit Here To Digitalize </Button>
+    <Button href="#" disabled={!props.displayButtons} onClick={() => props.initializePath()}>Click To Try A S D W Magic Keys</Button>
+    <Button href="#" disabled={!props.displayButtons} onClick={() => props.initializeAnimation()}>Tree to birds!</Button>
+    <Button href="#" disabled={!props.displayButtons} onClick={() => props.who()}>Who's Watching?</Button>
   </ButtonGroup>
 )
 

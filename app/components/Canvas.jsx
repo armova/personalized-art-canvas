@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { paper, tool } from 'paper/dist/paper-full'
 import socket from '../socket'
+//SETS PAPER.JS TO WINDOW, HAS IMPORTANT IMPLICATIONS
+// CAN BE DONE IN OTHER WAYS TOO
 paper.install(window)
-
 import Controls from './Controls'
 
 export default class Canvas extends Component {
 
+  //SETS STATE, SETS SOCKET.IO TO FUNCTION, BINDS FUNCTIONS
   constructor (props) {
     super(props)
     this.state = {
@@ -15,7 +17,7 @@ export default class Canvas extends Component {
       demoPath1Position: undefined,
       AnimatedSymbols: undefined,
       eyes: undefined,
-      IMGrasterized: false
+      IMGrasterized: false,
     }
     socket.on('newData', (data) => this.initializeAnimation(data))
     this.loadRaster = this.loadRaster.bind(this)
@@ -27,6 +29,7 @@ export default class Canvas extends Component {
     this.who = this.who.bind(this)
   }
 
+  // SETS CANVAS SIZE, SETSUP PAPER.JS, LOADS IMAGE, SETS VIEW EVENTS TO COMPONENTS FUNCTIONS
   componentDidMount () {
     const myCanvas = document.getElementById('myCanvas');
     myCanvas.width = window.innerWidth;
@@ -34,11 +37,10 @@ export default class Canvas extends Component {
     paper.setup(myCanvas);
     this.loadRaster()
     view.onKeyDown = this.keyDownFunc
-    view.onMouseDown = this.mouseDownFunc
-    view.onMouseDrag = this.mouseDragFunc
     view.onFrame = this.onFrameFunc
   }
 
+  //ADDS SOME CIRCLES (WATCHING CIA EYES) TO THE CANVAS
   who () {
     if(!this.state.eyes){
       var myStyle1 = {
@@ -88,6 +90,7 @@ export default class Canvas extends Component {
     }
   }
 
+  //SETS THE QTY OF SYMBOLS TO ANIMATE ACCORIDNG TO THE BALLS CREATED WHEN CHANGING IMAGE TO BALLS - 3500
   initializeAnimation () {
     // The amount of circles we want to make:
     if((this.state.AnimatedSymbols === undefined)&&(this.state.IMGrasterized)){
@@ -97,6 +100,7 @@ export default class Canvas extends Component {
     }
   }
 
+  // ONE EACH FRAME CHANGES THE ANIMATES ELEMENTS POSITION
   onFrameFunc (event) {
     // Run through the active layer's children list and change
     // the position of the placed symbols:
@@ -120,6 +124,7 @@ export default class Canvas extends Component {
     }
   }
 
+  //INITIALIZE A PATH TO BE ABLE TO DRAW WITH A S D W KEYS
   initializePath() {
     var position = new Point(20, 500);
     var path = new Path();
@@ -131,6 +136,7 @@ export default class Canvas extends Component {
     this.setState({demoPath1Position: position})
   }
 
+  //DRAW WITH A S D W KEYS
   keyDownFunc (event) {
     const step = 50
     const position = this.state.demoPath1Position
@@ -150,7 +156,7 @@ export default class Canvas extends Component {
     this.setState({demoPath1Position: position})
   }
 
-
+  /// IMAGE
   loadRaster () {
     let raster = new Raster('art')
     raster.size = new Size(396, 551)
@@ -161,6 +167,7 @@ export default class Canvas extends Component {
     project.activeLayer.position = view.center;
   }
 
+  //DIGITALIZE IMAGE TO BALLS
   rasterToBalls() {
     if(!this.state.IMGrasterized){
       const raster = this.state.mainRaster
@@ -199,11 +206,10 @@ export default class Canvas extends Component {
     return (
       <div>
         <canvas id="myCanvas" data-paper-resize />
-        <Controls rasterToBalls={this.rasterToBalls} initializePath={this.initializePath} initializeAnimation={this.initializeAnimation} who={this.who}/>
+        <Controls rasterToBalls={this.rasterToBalls} initializePath={this.initializePath} initializeAnimation={this.initializeAnimation} who={this.who} displayButtons={this.state.IMGrasterized}/>
       </div>
     )
   }
-
 }
 
 
