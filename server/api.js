@@ -5,6 +5,12 @@ const api = module.exports = require('express').Router() // eslint-disable-line 
 
 api
   .get('/heartbeat', (req, res) => res.send({ok: true}))
+  .get('/remote', function(req, res){
+    const st = require('./start')
+    const io = st.io
+    io.emit('newData', 1)
+    res.send('OK')
+  })
   .use('/users', require('./users'))
 
 // No routes matched? 404.

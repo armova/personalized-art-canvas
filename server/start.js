@@ -6,6 +6,8 @@ const {resolve} = require('path')
 const passport = require('passport')
 const PrettyError = require('pretty-error')
 const finalHandler = require('finalhandler')
+const socketio =  require('socket.io')
+
 // PrettyError docs: https://www.npmjs.com/package/pretty-error
 
 // Bones has a symlink from node_modules/APP to the root of the app.
@@ -31,10 +33,10 @@ prettyError.skipNodeFiles()
 // Skip all the trace lines about express' core and sub-modules.
 prettyError.skipPackage('express')
 
-module.exports = app
+// module.exports = app
   // Session middleware - compared to express-session (which is what's used in the Auther workshop), cookie-session stores sessions in a cookie, rather than some other type of session store.
   // Cookie-session docs: https://www.npmjs.com/package/cookie-session
-  .use(require('cookie-session')({
+  app.use(require('cookie-session')({
     name: 'session',
     keys: [process.env.SESSION_SECRET || 'an insecure secret key'],
   }))
@@ -78,8 +80,36 @@ if (module === require.main) {
       console.log(`Listening on http://${urlSafeHost}:${port}`)
     }
   )
+
+  //SCOKET.IO SERVER
+  var io = socketio(server)
+
+  io.on('connection', function (socket) {
+      /* This function receives the newly connected socket.
+         This function will be called for EACH browser that connects to our server. */
+      console.log('A new client has connected!')
+      console.log(socket.id)
+
+      socket.on('disconnect', function () {
+         console.log('user disconnected')
+          io.emit('news', {message: 'user has been disconnected from the system'})
+       })
+
+      socket.on('control-data', function(data){
+        socket.broadcast.emit('newData', data)
+      })
+
+
+  })
+
 }
 
 // This check on line 64 is only starting the server if this file is being run directly by Node, and not required by another file.
 // Bones does this for testing reasons. If we're running our app in development or production, we've run it directly from Node using 'npm start'.
 // If we're testing, then we don't actually want to start the server; 'module === require.main' will luckily be false in that case, because we would be requiring in this file in our tests rather than running it directly.
+
+module.exports = {
+  app: app,
+  io: io
+}
+
