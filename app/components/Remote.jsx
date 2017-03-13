@@ -17,12 +17,16 @@ const handle = (event) => {
 
 const wellStyles = {
   maxWidth: 400,
-  height: 400,
+  height: 500,
   margin: '0 auto 10px'};
+
+const remote1 = {
+  height: 400
+}
 
 const Remote = (props) => (
   <div className="well" style={wellStyles}>
-    <Button bsStyle="primary" bsSize="large" block onClick={() => handle()}>REMOTE TREE TO BIRDS</Button>
+    <Button style={remote1} bsStyle="primary" bsSize="large" block onClick={() => handle()}>REMOTE TREE TO BIRDS</Button>
   </div>
 )
 
